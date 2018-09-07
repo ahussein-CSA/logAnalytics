@@ -15,7 +15,7 @@ IN NO EVENT SHALL MICROSOFT AND/OR ITS RESPECTIVE SUPPLIERS BE LIABLE FOR ANY SP
 
 #########################################################################################
 
-## What does the powershell script "forscotiasimple-automated-Final.ps1" do ?
+## What does the powershell script "logs-analytics-automated-Final.ps1 " do ?
 
 The scripts loop through all the subscriptions that belong to the account being singed in to Azure , pull all the resources under each subscription 
 determine if the resource has metrics and logs , then export the logs that can be captured by log analytics to a csv file , and present another file
