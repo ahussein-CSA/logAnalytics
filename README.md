@@ -19,7 +19,7 @@ IN NO EVENT SHALL MICROSOFT AND/OR ITS RESPECTIVE SUPPLIERS BE LIABLE FOR ANY SP
 
 The scripts loop through all the subscriptions that belong to the account being singed in to Azure , pull all the resources under each subscription 
 determine if the resource has metrics and logs , then export the logs that can be captured by log analytics to a csv file , and present another file
-where it shows which resource has support for both logs and metrics. the script is built open some concepts mentioned in this [powershell script](https://www.powershellgallery.com/packages/Enable-AzureRMDiagnostics/2.52/DisplayScript) 
+where it shows which resource has support for both logs and metrics. the script is built upon some concepts mentioned in this [powershell script](https://www.powershellgallery.com/packages/Enable-AzureRMDiagnostics/2.52/DisplayScript) 
 
 ### Pre-requisites:
 
