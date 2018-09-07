@@ -1,6 +1,6 @@
 #########################################################################################
 
-Script: Gather all logs for resources that can be pushed to log analytics within subscriptions for an account - Azure
+Script: Gather list of logs that can be enabled/pushed to log analytics for all the resources within subscriptions for an account - Azure
 
 Author: Ahmed Hussein - Microsoft
 
