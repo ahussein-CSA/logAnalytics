@@ -84,8 +84,7 @@ If($AzureLogin)
                             {
 
                                 write-host $cat
-                                #Set-AzureRmDiagnosticSetting -Name "Service2"  -EventhubName insights-logs-networksecuritygroupevent -EventHubAuthorizationRuleId $EHID -ResourceId /subscriptions/824d50a0-490f-4b13-89e3-7389a809543c/resourceGroups/reserveproxytest-rg/providers/Microsoft.Network/loadBalancers/testlbmanulife -Enabled $True -Categories $cat
-                                 
+                                
                                 Set-AzureRmDiagnosticSetting -Name "ServiceLogs" -ResourceId "$($resourceidtoenable)" -Enabled $True -Categories $cat
 
 
