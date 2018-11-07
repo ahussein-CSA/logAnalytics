@@ -73,7 +73,7 @@ If($AzureLogin)
                     }
 
                     Set-AzureRmDiagnosticSetting -Name "ServiceMetrics" -ResourceId "$($resourceidtoenable)" -WorkspaceId "$($workspaceid)" -Enabled $True -MetricCategory "AllMetrics"
-                    $setting = Get-AzureRmDiagnosticSetting -ResourceId "$($resourceidtoenable)" -ErrorAction Stop
+                    $setting = Get-AzureRmDiagnosticSetting -ResourceId "$($resourceidtoenable)"
                     
                     if ($setting.Logs) 
                         { 
