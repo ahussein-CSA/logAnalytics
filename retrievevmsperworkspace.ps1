@@ -27,7 +27,10 @@ $CurrentDate = Get-Date -Format 'dd-MM-yyyy-HH-mm-ss'
 $csvfilelistofVMs = "ListofVMs_$($CurrentDate).csv"
 $AllVMSwithinaworkspace=@()
 $ResourcesToCheckGeneral = @()
+ 
+# null means get the required for all the subscription the user has access to , other wise replace null with a sepcific subscription id
 $subscriptionid ="null"
+
 Clear-Variable ResourcesToCheckGeneral -Scope Script
 
 # Login to Azure - if already logged in, use existing credentials.
@@ -63,7 +66,7 @@ If($AzureLogin)
         
 
 
-        # get all workspaces built in the last month
+        # get all workspaces within the subscription
         
         $ResourcesToCheckGeneral= Get-AzOperationalInsightsWorkspace
 
@@ -79,7 +82,6 @@ If($AzureLogin)
         {
             write-host "number of workspaces under this Subscritpion is " $ResourcesToCheckGeneral.Count "`n"
             Write-Host "Gathering VMs and adding them to the array..." -ForegroundColor Yellow 
-            #$ResourcesToCheckGeneral
             foreach ($item in $ResourcesToCheckGeneral)
                 {
                     $workspacename=$item.Name
