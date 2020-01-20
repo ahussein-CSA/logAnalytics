@@ -1,5 +1,5 @@
 #######################################################################################################################
-# Script: Export a list of VMs Connected to workspace for all subscription for the account used - Azure to a .csv file
+# Script: Export a list of VMs Connected to workspace for all or single subscription for the account used - Azure to a .csv file
 # Author: Ahmed Hussein - Microsoft 
 # Date: January 2020
 # Version: 1.0
