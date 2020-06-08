@@ -4,6 +4,7 @@
 	Creation Date:  25th Apr, 2018
 	Updated : May 2020 - include tags as parameters and log in through run as account
 	Purpose/Change: Creating Azure Managed Disk Snapshot
+	Not for production workload
 #>
 
 Param
