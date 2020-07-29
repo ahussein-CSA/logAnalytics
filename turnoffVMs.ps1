@@ -54,8 +54,8 @@ catch {
 $AzureContext = Select-AzureRmSubscription -SubscriptionId $ServicePrincipalConnection.SubscriptionID
 
 $variableName = $variablenameinput
-$automationAccount = "testforupdatemanagement"
-$resourceGroup = "reserveproxytest-rg"
+$automationAccount = <automationaccountname>
+$resourceGroup = <resourcegroupautomationaccount>
 
 
 $variable = Get-AzureRmAutomationVariable -AutomationAccountName $automationAccount -Name $variableName -ResourceGroupName $resourceGroup
