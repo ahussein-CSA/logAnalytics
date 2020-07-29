@@ -31,10 +31,9 @@ Param
 )
   
 $variableName = "vmListId-" + $tagvalue #variablename in automation account
-$automationAccount = <<yourAutomationaccountName>
+$automationAccount = <yourAutomationaccountName>
 $resourceGroup = <Resourcegroupofyourautomationaccount>
 
-#$ServicePrincipalConnection = Get-AzAutomationConnection -ResourceGroupName $resourceGroup -AutomationAccountName $automationAccount -Name 'AzureRunAsConnection'
 $ServicePrincipalConnection = Get-AutomationConnection -Name 'AzureRunAsConnection'
 try 
 { 
