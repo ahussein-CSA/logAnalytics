@@ -30,9 +30,9 @@ Param
 
 )
   
-$variableName = "vmListId-" + $tagvalue
-$automationAccount = "testforupdatemanagement"
-$resourceGroup = "reserveproxytest-rg"
+$variableName = "vmListId-" + $tagvalue #variablename in automation account
+$automationAccount = <<yourAutomationaccountName>
+$resourceGroup = <Resourcegroupofyourautomationaccount>
 
 #$ServicePrincipalConnection = Get-AzAutomationConnection -ResourceGroupName $resourceGroup -AutomationAccountName $automationAccount -Name 'AzureRunAsConnection'
 $ServicePrincipalConnection = Get-AutomationConnection -Name 'AzureRunAsConnection'
@@ -67,7 +67,10 @@ New-AzureRmAutomationVariable -ResourceGroupName $resourceGroup -AutomationAccou
 #Azure VMs are expressed by:
 # subscription/$subscriptionID/resourcegroups/$resourceGroup/providers/microsoft.compute/virtualmachines/$name
 
-$vmIds = Get-AzureRmVM | where {$_.Tags['update'] -eq $tagvalue}
+# <Tagname> this is your tagname hardcoded, for example maintenance is the tagname, value is being captured from parameter input when running the automation account as an adhoc
+# $vmIds = Get-AzureRmVM | where {$_.Tags['maintenance'] -eq $tagvalue} 
+
+$vmIds = Get-AzureRmVM | where {$_.Tags['<Tagname>'] -eq $tagvalue} 
 
 Write-Output "checking the list"
 Write-Output $vmIds
