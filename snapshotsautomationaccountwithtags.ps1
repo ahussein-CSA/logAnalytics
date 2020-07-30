@@ -1,6 +1,6 @@
 <#	
-	Version:        2.0
-	Author:         Saravanan Muthiah
+	Version:        2.1
+	Author:         Saravanan Muthiah/Ahmed Hussein
 	Creation Date:  25th Apr, 2018
 	Updated : May 2020 - include tags as parameters and log in through run as account
 	Purpose/Change: Creating Azure Managed Disk Snapshot
@@ -50,11 +50,21 @@ catch {
         throw $_.Exception 
     } 
 } 
-$AzureContext = Select-AzureRmSubscription -SubscriptionId $ServicePrincipalConnection.SubscriptionID
 
-$tags = @{"update"="yes"} # more than one value of update
-#$tagResList = Get-AzureRmResource -TagName maintenancewindow -TagValue $tagvalue
-$tagResList = Get-AzureRmResource -Tag $tags
+#$AzureContext = Select-AzureRmSubscription -SubscriptionId $ServicePrincipalConnection.SubscriptionID
+#Select-AzureRmSubscription -Subscription MFC-Global-Production-Internal-S1-CoreServices
+#$tags = @{"update"="yes"} # more than one value of update
+
+$SubscriptionArray = Get-AzureRmSubscription
+
+ForEach ($vsub in $SubscriptionArray)
+    {
+
+	Write-Host "Selecting Azure Subscription: $($vsub.SubscriptionID) ..." -ForegroundColor Cyan 
+        $NULL = Select-AzSubscription -SubscriptionId $($vsub.SubscriptionID)
+$tagResList = Get-AzureRmResource -TagName "MaintenanceWindow" -TagValue $tagvalue
+
+#$tagResList = Get-AzureRmResource -Tag $tags
 
 
 foreach($tagRes in $tagResList) { 
@@ -102,4 +112,5 @@ foreach($tagRes in $tagResList) {
 		else{
 			$tagRes.ResourceId + " is not a compute instance"
 		}
+}
 }
