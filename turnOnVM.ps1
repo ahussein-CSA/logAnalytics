@@ -54,13 +54,13 @@ catch {
     } 
 } 
 
-$AzureContext = Select-AzureRmSubscription -SubscriptionId $ServicePrincipalConnection.SubscriptionID
+
+$SubscriptionArray = Get-AzureRmSubscription
 
 $updatedMachines = @()
 $startableStates = "stopped" , "stopping", "deallocated", "deallocating"
 $jobIDs= New-Object System.Collections.Generic.List[System.Object]
 
-New-AzureRmAutomationVariable -ResourceGroupName $resourceGroup -AutomationAccountName $automationAccount -Name $variableName -Value "" -Encrypted $false
 
 #Parse the list of VMs and start those which are stopped
 #Azure VMs are expressed by:
@@ -69,52 +69,58 @@ New-AzureRmAutomationVariable -ResourceGroupName $resourceGroup -AutomationAccou
 # <Tagname> this is your tagname hardcoded, for example maintenance is the tagname, value is being captured from parameter input when running the automation account as an adhoc
 # $vmIds = Get-AzureRmVM | where {$_.Tags['maintenance'] -eq $tagvalue} 
 
-$vmIds = Get-AzureRmVM | where {$_.Tags['<Tagname>'] -eq $tagvalue} 
 
-Write-Output "checking the list"
-Write-Output $vmIds
+ForEach ($vsub in $SubscriptionArray)
+    {
+        Write-Host "Selecting Azure Subscription: $($vsub.SubscriptionID) ..." -ForegroundColor Cyan 
+        $NULL = Select-AzSubscription -SubscriptionId $($vsub.SubscriptionID)
 
-if (!$vmIds) 
-{
-    
-        Write-Output "No Azure VMs found"
-        return
+        $vmIds = Get-AzureRmVM | where {$_.Tags['<Tagname>'] -eq $tagvalue} 
 
-}
+        Write-Output "checking the list"
+        Write-Output $vmIds
 
-foreach ($vmid in $vmIds)
-{
+        if (!$vmIds) 
+        {
 
-    $split = $vmid.Id -split "/";
-    $subscriptionId = $split[2]; 
-   
-    $rg = $split[4];
-     Write-Output ("the Resource group is: " + $rg)
-    $name = $vmid.name;
-    Write-Output ("the name is: " + $name)
-    Write-Output ("Subscription Id: " + $subscriptionId)
-    $mute = Select-AzureRmSubscription -Subscription $subscriptionId
+                Write-Output "No Azure VMs found"
+                return
 
-    $vm = Get-AzureRmVM -ResourceGroupName $rg -Name $name -Status 
-    #$vm = Get-AzureRmVM -ResourceGroupName "RESERVEPROXYTEST-RG" -Name "linuxpocdemo" -Status
+        }
 
-Write-Output ("the VMS are " + $vm)
-    #Query the state of the VM to see if it's already running or if it's already started
-    $state = ($vm.Statuses[1].DisplayStatus -split " ")[1]
-    Write-Output $state
-    if($state -in $startableStates) {
-        Write-Output "Starting '$($name)' ..."
-        #Store the VM we started so we remember to shut it down later
-        $updatedMachines += $vmid.Id
-        $newJob = Start-ThreadJob -ScriptBlock { param($resource, $vmname) Start-AzureRmVM -ResourceGroupName $resource -Name $vmname} -ArgumentList $rg,$name
-        $jobIDs.Add($newJob.Id)
-    }else {
-        Write-Output ($name + ": no action taken. State: " + $state) 
-    }
-}
+        foreach ($vmid in $vmIds)
+        {
+
+            $split = $vmid.Id -split "/";
+            $subscriptionId = $split[2]; 
+
+            $rg = $split[4];
+             Write-Output ("the Resource group is: " + $rg)
+            $name = $vmid.name;
+            Write-Output ("the name is: " + $name)
+            Write-Output ("Subscription Id: " + $subscriptionId)
+            $mute = Select-AzureRmSubscription -Subscription $subscriptionId
+
+            $vm = Get-AzureRmVM -ResourceGroupName $rg -Name $name -Status 
+            #$vm = Get-AzureRmVM -ResourceGroupName "RESERVEPROXYTEST-RG" -Name "linuxpocdemo" -Status
+
+        Write-Output ("the VMS are " + $vm)
+            #Query the state of the VM to see if it's already running or if it's already started
+            $state = ($vm.Statuses[1].DisplayStatus -split " ")[1]
+            Write-Output $state
+            if($state -in $startableStates) {
+                Write-Output "Starting '$($name)' ..."
+                #Store the VM we started so we remember to shut it down later
+                $updatedMachines += $vmid.Id
+                $newJob = Start-ThreadJob -ScriptBlock { param($resource, $vmname) Start-AzureRmVM -ResourceGroupName $resource -Name $vmname} -ArgumentList $rg,$name
+                $jobIDs.Add($newJob.Id)
+            }else {
+                Write-Output ($name + ": no action taken. State: " + $state) 
+            }
+        }
 
 
-$updatedMachinesCommaSeperated = $updatedMachines -join ","
+
 
 #Wait until all machines have finished starting before proceeding to the Update Deployment
 $jobsList = $jobIDs.ToArray()
@@ -133,9 +139,12 @@ foreach($id in $jobsList)
     }
 
 }
-
+}
+$updatedMachinesCommaSeperated = $updatedMachines -join ","
 Write-output $updatedMachinesCommaSeperated
 #Store output in the automation variable
 #Set-AutomationVariable -Name $runId -Value $updatedMachinesCommaSeperated
 
+$AzureContext = Select-AzureRmSubscription -SubscriptionId $ServicePrincipalConnection.SubscriptionID
+New-AzureRmAutomationVariable -ResourceGroupName $resourceGroup -AutomationAccountName $automationAccount -Name $variableName -Value "" -Encrypted $false
 Set-AzureRmAutomationVariable -AutomationAccountName $automationAccount -Name $variableName -ResourceGroupName $resourceGroup -Value $updatedMachinesCommaSeperated -Encrypted $False
