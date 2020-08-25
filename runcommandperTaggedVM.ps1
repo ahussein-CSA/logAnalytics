@@ -94,7 +94,6 @@ ForEach ($vsub in $SubscriptionArray)
             $mute = Select-AzureRmSubscription -Subscription $subscriptionId      
             # Invoke the REST API
             $restUri = 'https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$rg/providers/Microsoft.Compute/virtualMachines/$name/runCommand?api-version=2017-03-30'
-            #$restUri = 'https://management.azure.com/subscriptions/824d50a0-490f-4b13-89e3-7389a809543c/resourceGroups/reserveproxytest-rg/providers/Microsoft.Compute/virtualMachines/linuxpocdemo/runCommand?api-version=2017-03-30'
             $body = @{
                 'commandId' = 'RunShellScript'
               'script' = @('ps -aux')
